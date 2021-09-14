@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/bd3f251c-61d0-4ecb-b659-c9b383e447e6/resourceGroups/KadaVM_group/providers/Microsoft.Web/sites/kadaAuth",
+    "appService.deploySubpath": "."
+}
