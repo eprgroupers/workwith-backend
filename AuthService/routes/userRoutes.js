@@ -156,7 +156,7 @@ router.post(
 
 router.post("/google", async (req, res) => {
   try {
-    const tokenId = req.body?.tokenId;
+    const tokenId = req.body.tokenId;
     const verify = await client.verifyIdToken({
       idToken: tokenId,
       audience: process.env.Google_Client_ID,
