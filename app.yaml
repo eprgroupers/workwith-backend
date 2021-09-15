@@ -1,0 +1,27 @@
+runtime: nodejs16 # or another supported version
+
+instance_class: F2
+
+env_variables:
+  BUCKET_NAME: "example-gcs-bucket"
+  PORT: " 8000"
+  JWT_KEY: " lizris-jaffna"
+  MONGO_URI11112: " mongodb+srv://lizris:lizris@kadaapp.ee0ti.mongodb.net/KadaAppService?retryWrites=true&w=majority"
+  MONGO_URI: " mongodb+srv://john:john@cluster0.a0fgx.mongodb.net/ServiceDatabase?retryWrites=true&w=majority"
+  API2: " http://kada.eastus.cloudapp.azure.com/api"
+  API: " http://localhost:8080"
+  client: " http://localhost:4200"
+
+  ZOHO_USERNAME: " info@schoolbag.pro"
+  ZOHO_PASSWORD: " Lb@gRsR$7uXkTKT"
+
+  Google_Client_ID: " 13970503726-97nhnages7cdjpffik6qa7lm68vdt1jt.apps.googleusercontent.com"
+  Google_Client_SECRET: " GVs1OKuDqkKKjSXuRAbnWGEV"
+  Google_Redirect_URI: " https://developers.google.com/oauthplayground"
+  Google_Refresh_TOKEN: " 1//04aHSXTwnwPL9CgYIARAAGAQSNwF-L9IrCeKQ50hOsJW0aaSzTDfMJfZG5nEAkMUvJ1MtJAhlejsDVNdkMkT8iO5UPbhp3qTfHIY"
+
+  FB_Client_ID: " 303547561493723"
+  FB_Client_SECRET: " c804fab5b1191bcb32644dcc3745528f"
+  FB_Redirect_URI: " /auth/facebook/callback"
+
+  CLOUDINARY_URL: "cloudinary://233241731148452:D7zPNuJCdAG_dC5NeEUKMayFZto@epr-groupers"
