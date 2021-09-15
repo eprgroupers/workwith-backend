@@ -49,6 +49,7 @@ connection
   .then(() => {
     app.listen(process.env.PORT, () => {
       console.log("Database connection established");
+
       console.log(`Server started on port ${process.env.PORT}`);
     });
   })

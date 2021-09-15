@@ -6,6 +6,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
+// Get all workers list
 router.get("/", async (req, res) => {
   try {
     const worker = await Worker.find(
@@ -17,22 +18,61 @@ router.get("/", async (req, res) => {
     res.send("Error " + err);
   }
 });
-
-router.get("username/:name", async (req, res) => {
-  let name = req.params.name;
+// search result
+router.get("/search", async (req, res) => {
+  let district = req.query.district;
+  let job = req.query.job;
   try {
     const worker = await Worker.find(
+      { Activate: true, District: district, Job: job },
+      { Name: 1, Rating: 1, Age: 1, ProfileImg: 1, UserName: 1 }
+    );
+    res.json(worker).status(200);
+  } catch (err) {
+    res.send("Error " + err);
+  }
+});
+
+//filter result
+router.get("/filter", async (req, res) => {
+  let district = req.query.district;
+  let job = req.query.job;
+  try {
+    const worker = await Worker.find(
+      { Activate: true, District: district, Job: job },
+      { Name: 1, Rating: 1, Age: 1, ProfileImg: 1, UserName: 1 }
+    );
+    res.json(worker).status(200);
+  } catch (err) {
+    res.send("Error " + err);
+  }
+});
+
+router.get("/username/:name", async (req, res) => {
+  let name = req.params.name;
+  let findedWorker;
+  try {
+    let editWorker = await Worker.findOne(
       { UserName: name, Activate: true },
       {
         cloudinaryDetails: 0,
         Activate: 0,
-        views: 0,
       }
-    ).exec((err, worker) => {
-      if (worker) {
-        res.json(worker).status(200);
+    );
+    if (editWorker === null) {
+      res.status(404).send("No records found");
+    } else {
+      console.log(editWorker.views);
+      try {
+        editWorker.views = editWorker.views + 1;
+        await editWorker.save();
+        res.status(200).json(editWorker);
+      } catch {
+        res.status(404);
+
+        res.send("it is already in blocked list");
       }
-    });
+    }
   } catch (err) {
     console.log(err);
     res.send("Error " + err);
@@ -152,7 +192,7 @@ router.patch("/unblockworker", async (req, res) => {
   }
 });
 
-router.get("/username/:name", async (req, res) => {
+router.get("/by-username/:name", async (req, res) => {
   const name = req.params.name;
   Worker.findOne({ UserName: new RegExp("^" + name + "$", "i") }).then(
     (result) => {

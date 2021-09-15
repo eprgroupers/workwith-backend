@@ -5,6 +5,10 @@ const WorkerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  Job: {
+    type: String,
+    required: true,
+  },
   UserName: {
     type: String,
     required: true,
