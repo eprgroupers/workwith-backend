@@ -39,6 +39,7 @@ app.use("/worker", WorkerRouter);
 app.use("/job", jobRouter);
 
 const uri = process.env.MONGO_URI;
+const PORT = process.env.PORT || 8080;
 let connection = mongoose.connect(mongouri, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
@@ -47,10 +48,10 @@ let connection = mongoose.connect(mongouri, {
 });
 connection
   .then(() => {
-    app.listen(process.env.PORT, () => {
+    app.listen(PORT, () => {
       console.log("Database connection established");
 
-      console.log(`Server started on port ${process.env.PORT}`);
+      console.log(`Server started on port ${PORT}`);
     });
   })
   .catch((err) => {
