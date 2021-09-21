@@ -23,13 +23,27 @@ const WorkerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  WhatsAppNo: {
+    type: String,
+    required: false,
+  },
   District: {
     type: String,
     required: true,
   },
+  Description: {
+    type: String,
+  },
+  Experience: {
+    type: Number,
+  },
   Age: {
     type: Number,
     required: true,
+  },
+  Address: {
+    type: String,
+    default: null,
   },
   WorkArea: [{ type: String }],
   NICNo: {

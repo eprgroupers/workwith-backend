@@ -12,7 +12,13 @@ router.get("/", async (req, res) => {
       {},
       {
         cloudinaryDetails: 0,
+      },
+      {
+        sort: {
+          count: -1, //Sort by Date Added DESC
+        },
       }
+      // $orderby: { age : -1 }
     );
     res.json(job).status(200);
   } catch (err) {

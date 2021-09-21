@@ -2,6 +2,7 @@ const express = require("express");
 const MulterUploader = require("../../middleware/multer-engine");
 const router = express.Router();
 const Worker = require("../models/worker");
+const Job = require("../models/job");
 const ObjectId = require("mongoose").Types.ObjectId;
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
@@ -48,9 +49,9 @@ router.get("/filter", async (req, res) => {
   }
 });
 
+// search by username
 router.get("/username/:name", async (req, res) => {
   let name = req.params.name;
-  let findedWorker;
   try {
     let editWorker = await Worker.findOne(
       { UserName: name, Activate: true },
@@ -62,14 +63,13 @@ router.get("/username/:name", async (req, res) => {
     if (editWorker === null) {
       res.status(404).send("No records found");
     } else {
-      console.log(editWorker.views);
       try {
         editWorker.views = editWorker.views + 1;
         await editWorker.save();
         res.status(200).json(editWorker);
-      } catch {
+      } catch (err) {
+        console.log(err);
         res.status(404);
-
         res.send("it is already in blocked list");
       }
     }
@@ -79,6 +79,25 @@ router.get("/username/:name", async (req, res) => {
   }
 });
 
+//get worker by username
+router.get("/check/username/:name", async (req, res) => {
+  let name = req.params.name;
+  let findedWorker;
+  try {
+    let editWorker = await Worker.findOne({ UserName: name });
+    if (editWorker === null) {
+      res.status(404).send("UserName is not Available");
+    } else {
+      console.log(editWorker.views);
+
+      res.send("it is already in blocked list");
+    }
+  } catch (err) {
+    console.log(err);
+    res.send("Error " + err);
+  }
+});
+// search by id
 router.get("/id/:id", async (req, res) => {
   let id = req.params.id;
   try {
@@ -97,6 +116,7 @@ router.get("/id/:id", async (req, res) => {
   }
 });
 
+// get all blocked workers list
 router.get("/blockedworker", async (req, res) => {
   try {
     const worker = await Worker.find(
@@ -109,9 +129,9 @@ router.get("/blockedworker", async (req, res) => {
   }
 });
 
+// Add a worker
 router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
   if (req.file !== undefined) {
-    console.log("file");
     cloudinary.uploader
       .upload(req.file.path, {
         use_filename: true,
@@ -119,22 +139,46 @@ router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
         public_id: req.file.filename,
       })
       .then(async (result) => {
-        console.log(result);
         let newWorker = new Worker(req.body);
         newWorker.cloudinaryDetails = result;
         newWorker.ProfileImg = result.url;
         try {
-          newWorker.save();
-          res.send(newWorker);
-        } catch {
-          console.log("error");
+          // newWorker.save();
+          let editJob = await Job.findOne({ Job: req.body.Job });
+
+          if (editJob === null) {
+            res.status(404).send("No records found");
+          } else {
+            editJob.count = editJob.count + 1;
+            console.log(editJob.count);
+            newWorker.save();
+            editJob.save();
+            res.json(newWorker.Name);
+          }
+
+          // res.send(newWorker);
+        } catch (err) {
+          // console.log("error");
+          console.log(err);
         }
       });
   } else {
     const newWorker = new Worker(req.body);
     try {
-      newWorker.save();
-      res.send(newWorker.Name);
+      // newWorker.save();
+      let editJob = await Job.findOne({ Job: req.body.Job });
+
+      if (editJob === null) {
+        res.status(404).send("No records found");
+      } else {
+        editJob.count = editJob.count + 1;
+        console.log(editJob.count);
+        newWorker.save();
+        editJob.save();
+        res.json(newWorker.Name);
+      }
+
+      // res.send(newWorker);
     } catch {
       res.status(500).status("some error occured");
     }
@@ -192,6 +236,7 @@ router.patch("/unblockworker", async (req, res) => {
   }
 });
 
+// check whether username available
 router.get("/by-username/:name", async (req, res) => {
   const name = req.params.name;
   Worker.findOne({ UserName: new RegExp("^" + name + "$", "i") }).then(

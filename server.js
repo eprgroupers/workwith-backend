@@ -16,6 +16,7 @@ const forgetPasswordRoutes = require("./AuthService/routes/forgetPasswordRoutes"
 const checkIdentity = require("./AuthService/routes/checkIdentity");
 const mongouri =
   "mongodb+srv://eprgroupers:eprgroupers@cluster0.5jlys.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+// "mongodb+srv://sample:sample@cluster0.sozug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

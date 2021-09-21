@@ -13,6 +13,10 @@ const JobSchema = mongoose.Schema({
     type: String,
     default: null,
   },
+  Icon: {
+    type: String,
+    default: null,
+  },
   count: {
     type: Number,
     default: 0,
