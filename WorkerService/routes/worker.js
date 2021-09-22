@@ -7,6 +7,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
+router.use("/review", require("./review"));
 // Get all workers list
 router.get("/", async (req, res) => {
   try {

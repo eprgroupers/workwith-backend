@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const JobSchema = mongoose.Schema({
+const ReviewSchema = mongoose.Schema({
   Name: {
     type: String,
     required: true,
@@ -15,7 +15,7 @@ const JobSchema = mongoose.Schema({
   },
   Date: {
     type: Date,
-    default: 0,
+    default: Date.now(),
   },
   workerID: {
     type: String,

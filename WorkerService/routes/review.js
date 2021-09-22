@@ -6,64 +6,46 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
-
+//get all reviews
 router.get("/", async (req, res) => {
-  
-
   try {
     const review = await Review.find();
     res.json(review).status(200);
   } catch (err) {
-    res.send("Error " + err);
-  }
-});
-router.get("/:id", async (req, res) => {
-  let id = req.params.id;
-  try {
-    const job = await Review.findById(id, {
-      cloudinaryDetails: 0,
-    }).exec((err, job) => {
-      if (job) {
-        res.json(job).status(200);
-      }
-    });
-  } catch (err) {
-    console.log(err);
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 
-router.post("/", MulterUploader.single("job-img"), async (req, res) => {
-  if (req.file !== undefined) {
-    console.log("file");
-    cloudinary.uploader
-      .upload(req.file.path, {
-        use_filename: true,
-        folder: "lkworker-jobs",
-        public_id: req.file.filename,
-      })
-      .then(async (result) => {
-        console.log(result);
-        let newJob = new Review(req.body);
-        newJob.cloudinaryDetails = result;
-        newJob.Image = result.url;
-        try {
-          newJob.save();
-          res.send(newJob);
-        } catch {
-          console.log("error");
-        }
-      });
-  } else {
-    const newJob = new Review(req.body);
-    try {
-      newJob.save();
-      res.send(newJob.Name);
-    } catch {
-      res.status(500).status("some error occured");
-    }
+// post a review
+router.post("/", async (req, res) => {
+  let newReview = new Review(req.body);
+
+  try {
+    newReview.save();
+    res.json(newReview);
+  } catch {
+    console.log("error");
   }
 });
+
+// get review for user
+router.get("/:id", async (req, res) => {
+  let id = req.params.id;
+  try {
+    const review = await Review.find({ workerID: id }, {}).exec(
+      (err, review) => {
+        if (review) {
+          res.json(review).status(200);
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.json("Error " + err);
+  }
+});
+
+// Delete a review`
 
 router.patch("/blockjob", async (req, res) => {
   id = req.body.id;
@@ -79,10 +61,10 @@ router.patch("/blockjob", async (req, res) => {
           editJob.save();
           res.status(200).send("successfully blocked");
         } catch {
-          res.send("some error occured please try again");
+          res.json("some error occured please try again");
         }
       } else {
-        res.send("it is already in blocked list");
+        res.json("it is already in blocked list");
       }
     }
   } else {
