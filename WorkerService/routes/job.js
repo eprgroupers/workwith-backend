@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
     );
     res.json(job).status(200);
   } catch (err) {
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 router.get("/:id", async (req, res) => {
@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 
@@ -57,7 +57,7 @@ router.post("/", MulterUploader.single("job-img"), async (req, res) => {
         newJob.Image = result.url;
         try {
           newJob.save();
-          res.send(newJob);
+          res.json(newJob);
         } catch {
           console.log("error");
         }
@@ -66,7 +66,7 @@ router.post("/", MulterUploader.single("job-img"), async (req, res) => {
     const newJob = new Job(req.body);
     try {
       newJob.save();
-      res.send(newJob.Name);
+      res.json(newJob);
     } catch {
       res.status(500).status("some error occured");
     }
@@ -87,10 +87,10 @@ router.patch("/blockjob", async (req, res) => {
           editJob.save();
           res.status(200).send("successfully blocked");
         } catch {
-          res.send("some error occured please try again");
+          res.json("some error occured please try again");
         }
       } else {
-        res.send("it is already in blocked list");
+        res.json("it is already in blocked list");
       }
     }
   } else {

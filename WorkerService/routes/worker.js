@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     );
     res.json(worker).status(200);
   } catch (err) {
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 // search result
@@ -30,7 +30,7 @@ router.get("/search", async (req, res) => {
     );
     res.json(worker).status(200);
   } catch (err) {
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 
@@ -45,7 +45,7 @@ router.get("/filter", async (req, res) => {
     );
     res.json(worker).status(200);
   } catch (err) {
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 
@@ -70,12 +70,12 @@ router.get("/username/:name", async (req, res) => {
       } catch (err) {
         console.log(err);
         res.status(404);
-        res.send("it is already in blocked list");
+        res.json("it is already in blocked list");
       }
     }
   } catch (err) {
     console.log(err);
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 
@@ -90,11 +90,11 @@ router.get("/check/username/:name", async (req, res) => {
     } else {
       console.log(editWorker.views);
 
-      res.send("it is already in blocked list");
+      res.json("it is already in blocked list");
     }
   } catch (err) {
     console.log(err);
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 // search by id
@@ -112,7 +112,7 @@ router.get("/id/:id", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 
@@ -125,7 +125,7 @@ router.get("/blockedworker", async (req, res) => {
     );
     res.json(worker).status(200);
   } catch (err) {
-    res.send("Error " + err);
+    res.json("Error " + err);
   }
 });
 
@@ -156,7 +156,7 @@ router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
             res.json(newWorker.Name);
           }
 
-          // res.send(newWorker);
+          // res.json(newWorker);
         } catch (err) {
           // console.log("error");
           console.log(err);
@@ -178,7 +178,7 @@ router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
         res.json(newWorker.Name);
       }
 
-      // res.send(newWorker);
+      // res.json(newWorker);
     } catch {
       res.status(500).status("some error occured");
     }
@@ -197,12 +197,12 @@ router.patch("/blockworker", async (req, res) => {
         editWorker.Activate = false;
         try {
           editWorker.save();
-          res.status(200).send("successfully blocked");
+          res.status(200).json("successfully blocked");
         } catch {
-          res.send("some error occured please try again");
+          res.json("some error occured please try again");
         }
       } else {
-        res.send("it is already in blocked list");
+        res.json("it is already in blocked list");
       }
     }
   } else {
@@ -225,10 +225,10 @@ router.patch("/unblockworker", async (req, res) => {
           editWorker.save();
           res.status(200).send("successfully unblocked");
         } catch {
-          res.send("some error occured please try again");
+          res.json("some error occured please try again");
         }
       } else {
-        res.send("It is not in blocked list");
+        res.json("It is not in blocked list");
       }
     }
   } else {
