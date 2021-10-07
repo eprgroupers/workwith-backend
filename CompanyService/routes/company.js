@@ -3,11 +3,34 @@ const router = express.Router();
 const Company = require("../models/company");
 const ObjectId = require("mongoose").Types.ObjectId;
 
+// get all companies
 router.get("/", async (req, res) => {
   try {
-    const company = await Company.find({ Activate: true });
+    // get all companies from mongodb with specific feilds
+    const company = await Company.find(
+      { Activate: true },
+      {
+        Name: 1,
+      }
+    );
+    // send data to front end with 200 status code
     res.json(company).status(200);
   } catch (err) {
+    // catch error
+    res.send("Error " + err);
+  }
+});
+
+// get a company with id
+router.get("/:id", async (req, res) => {
+  let id = req.params.id;
+  try {
+    // get all companies from mongodb with specific feilds
+    const company = await Company.findone({ _id: id, Activate: true });
+    // send data to front end with 200 status code
+    res.json(company).status(200);
+  } catch (err) {
+    // catch error
     res.send("Error " + err);
   }
 });

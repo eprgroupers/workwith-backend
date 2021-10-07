@@ -56,6 +56,10 @@ const WorkerSchema = mongoose.Schema({
     required: true,
     default: true,
   },
+  WhatsAppAvailable: {
+    type: Boolean,
+    default: false,
+  },
   ProfileImg: {
     type: String,
     default: null,

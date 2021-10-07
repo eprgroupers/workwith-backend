@@ -73,6 +73,38 @@ router.post("/", MulterUploader.single("job-img"), async (req, res) => {
   }
 });
 
+router.post("/", MulterUploader.single("job-img"), async (req, res) => {
+  if (req.file !== undefined) {
+    console.log("file");
+    cloudinary.uploader
+      .upload(req.file.path, {
+        use_filename: true,
+        folder: "lkworker-jobs",
+        public_id: req.file.filename,
+      })
+      .then(async (result) => {
+        console.log(result);
+        let newJob = new Job(req.body);
+        newJob.cloudinaryDetails = result;
+        newJob.Image = result.url;
+        try {
+          newJob.save();
+          res.json(newJob);
+        } catch {
+          console.log("error");
+        }
+      });
+  } else {
+    const newJob = new Job(req.body);
+    try {
+      newJob.save();
+      res.json(newJob);
+    } catch {
+      res.status(500).status("some error occured");
+    }
+  }
+});
+
 router.patch("/blockjob", async (req, res) => {
   id = req.body.id;
 
