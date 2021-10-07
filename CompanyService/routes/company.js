@@ -11,6 +11,10 @@ router.get("/", async (req, res) => {
       { Activate: true },
       {
         Name: 1,
+        WhoWeAre: 1,
+        RegNumber: 1,
+        Ownership: 1,
+        ContactNo: 1,
       }
     );
     // send data to front end with 200 status code
