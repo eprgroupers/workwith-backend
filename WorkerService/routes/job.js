@@ -42,65 +42,39 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", MulterUploader.single("job-img"), async (req, res) => {
-  if (req.file !== undefined) {
-    console.log("file");
-    cloudinary.uploader
-      .upload(req.file.path, {
-        use_filename: true,
-        folder: "lkworker-jobs",
-        public_id: req.file.filename,
-      })
-      .then(async (result) => {
-        console.log(result);
-        let newJob = new Job(req.body);
-        newJob.cloudinaryDetails = result;
-        newJob.Image = result.url;
-        try {
-          newJob.save();
-          res.json(newJob);
-        } catch {
-          console.log("error");
-        }
-      });
-  } else {
-    const newJob = new Job(req.body);
-    try {
-      newJob.save();
-      res.json(newJob);
-    } catch {
-      res.status(500).status("some error occured");
-    }
-  }
-});
-
-router.post("/", MulterUploader.single("job-img"), async (req, res) => {
-  if (req.file !== undefined) {
-    console.log("file");
-    cloudinary.uploader
-      .upload(req.file.path, {
-        use_filename: true,
-        folder: "lkworker-jobs",
-        public_id: req.file.filename,
-      })
-      .then(async (result) => {
-        console.log(result);
-        let newJob = new Job(req.body);
-        newJob.cloudinaryDetails = result;
-        newJob.Image = result.url;
-        try {
-          newJob.save();
-          res.json(newJob);
-        } catch {
-          console.log("error");
-        }
-      });
-  } else {
-    const newJob = new Job(req.body);
-    try {
-      newJob.save();
-      res.json(newJob);
-    } catch {
-      res.status(500).status("some error occured");
+  //check whether the job is already added
+  let checkJob = await Job.findOne({ Job: req.body.Job });
+  if (checkJob !== null) res.send("already registered");
+  else {
+    // register the job
+    if (req.file !== undefined) {
+      console.log("file");
+      cloudinary.uploader
+        .upload(req.file.path, {
+          use_filename: true,
+          folder: "lkworker-jobs",
+          public_id: req.file.filename,
+        })
+        .then(async (result) => {
+          console.log(result);
+          let newJob = new Job(req.body);
+          newJob.cloudinaryDetails = result;
+          newJob.Image = result.url;
+          try {
+            newJob.save();
+            res.json(newJob);
+          } catch {
+            console.log("error");
+          }
+        });
+    } else {
+      const newJob = new Job(req.body);
+      try {
+        newJob.save();
+        res.json(newJob);
+      } catch {
+        res.status(500).send("some error occured");
+      }
     }
   }
 });

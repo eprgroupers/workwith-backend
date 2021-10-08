@@ -120,13 +120,17 @@ router.get("/check/username/:name", async (req, res) => {
 router.get("/id/:id", async (req, res) => {
   let id = req.params.id;
   try {
+    console.log(id);
     const worker = await Worker.findById(id, {
       cloudinaryDetails: 0,
       Activate: 0,
       views: 0,
     }).exec((err, worker) => {
+      console.log(worker);
       if (worker) {
         res.json(worker).status(200);
+      } else {
+        console.log(err, "here");
       }
     });
   } catch (err) {
@@ -150,59 +154,77 @@ router.get("/blockedworker", async (req, res) => {
 
 // Add a worker
 router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
+  // check whether this username available
   let userNameCheck = await Worker.findOne({ UserName: req.body.UserName });
-  if (userNameCheck !== null) res.send("username already registered");
-  else {
-    if (req.file !== undefined) {
-      cloudinary.uploader
-        .upload(req.file.path, {
-          use_filename: true,
-          folder: "work-with",
-          public_id: req.file.filename,
-        })
-        .then(async (result) => {
-          let newWorker = new Worker(req.body);
-          newWorker.cloudinaryDetails = result;
-          newWorker.ProfileImg = result.url;
-          try {
-            // newWorker.save();
-            let editJob = await Job.findOne({ Job: req.body.Job });
+  if (userNameCheck !== null) {
+    //if username not available
+    res.send("username already registered");
+  } else {
+    // check whether img is available to upload
 
-            if (editJob === null) {
-              res.status(404).send("No records found");
-            } else {
-              editJob.count = editJob.count + 1;
-              console.log(editJob.count);
-              newWorker.save();
-              editJob.save();
-              res.json(newWorker.Name);
-            }
+    //check NIC Available
 
-            // res.json(newWorker);
-          } catch (err) {
-            // console.log("error");
-            console.log(err);
-          }
-        });
+    let checkNIC = await Worker.findOne({ NICNo: req.body.NICNo });
+    if (checkNIC !== null) {
+      //if Nic already registered
+      res.send("NIC already registered");
     } else {
-      const newWorker = new Worker(req.body);
-      try {
-        // newWorker.save();
-        let editJob = await Job.findOne({ Job: req.body.Job });
+      if (req.file !== undefined) {
+        cloudinary.uploader
+          .upload(req.file.path, {
+            use_filename: true,
+            folder: "work-with",
+            public_id: req.file.filename,
+          })
+          .then(async (result) => {
+            let newWorker = new Worker(req.body);
+            newWorker.cloudinaryDetails = result;
+            newWorker.ProfileImg = result.url;
+            try {
+              newWorker.save((err, res) => {
+                res.Job.map((job) => {
+                  console.log(job);
+                });
+              });
+              // newWorker.save();
+              let editJob = await Job.findOne({ Job: req.body.Job });
 
-        if (editJob === null) {
-          res.status(404).send("No records found");
-        } else {
-          editJob.count = editJob.count + 1;
-          console.log(editJob.count);
-          newWorker.save();
-          editJob.save();
+              if (editJob === null) {
+                res.status(404).send("No records found");
+              } else {
+                editJob.count = editJob.count + 1;
+                console.log(editJob.count);
+
+                editJob.save();
+                res.json(newWorker.Name);
+              }
+              // res.json(newWorker);
+            } catch (err) {
+              // console.log("error");
+              console.log(err);
+            }
+          });
+      } else {
+        const newWorker = new Worker(req.body);
+        try {
+          newWorker.save((err, res) => {
+            res.Job.map(async (job) => {
+              let editJob = await Job.findOne({ Job: job });
+              if (editJob === null) {
+                res.status(404).send("No records found");
+              } else {
+                editJob.count = editJob.count + 1;
+                editJob.save();
+              }
+            });
+          });
+
           res.json(newWorker.Name);
-        }
 
-        // res.json(newWorker);
-      } catch {
-        res.status(500).status("some error occured");
+          // res.json(newWorker);
+        } catch {
+          res.status(500).status("some error occured");
+        }
       }
     }
   }
