@@ -5,9 +5,8 @@ const WorkerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  Job: {
+  WorkArea: {
     type: String,
-    required: true,
   },
   UserName: {
     type: String,
@@ -45,7 +44,7 @@ const WorkerSchema = mongoose.Schema({
     type: String,
     default: null,
   },
-  WorkArea: [{ type: String }],
+  Job: [{ type: String, required: true }],
   NICNo: {
     type: String,
     required: true,
@@ -70,6 +69,10 @@ const WorkerSchema = mongoose.Schema({
   views: {
     type: Number,
     default: 0,
+  },
+  reviewAvailable: {
+    type: Boolean,
+    default: false,
   },
 });
 
