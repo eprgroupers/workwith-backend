@@ -5,9 +5,9 @@ const WorkerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  WorkArea: {
-    type: String,
-  },
+  // WorkArea: {
+  //   type: String,
+  // },
   UserName: {
     type: String,
     required: true,

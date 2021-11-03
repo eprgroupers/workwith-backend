@@ -14,6 +14,8 @@ const userRoutes = require("./AuthService/routes/userRoutes");
 const resetPassword = require("./AuthService/routes/resetRoutes");
 const forgetPasswordRoutes = require("./AuthService/routes/forgetPasswordRoutes");
 const checkIdentity = require("./AuthService/routes/checkIdentity");
+const PageCount = require("./AnalyticService/routes/pagecount");
+const CallCount = require("./AnalyticService/routes/callCount");
 const mongouri =
   "mongodb+srv://eprgroupers:eprgroupers@cluster0.5jlys.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 // "mongodb+srv://sample:sample@cluster0.sozug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
@@ -27,6 +29,8 @@ app.use("/auth", userRoutes);
 app.use("/account", resetPassword);
 app.use("/forget-password", forgetPasswordRoutes);
 app.use("/check-identity", checkIdentity);
+app.use("/page-count", PageCount);
+app.use("/call-count", CallCount);
 // app.use("/update-profile", updateProfile);
 app.get("/", (req, res) => {
   res.send("Welcome to BuildWith ");
