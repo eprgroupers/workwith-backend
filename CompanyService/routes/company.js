@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Company = require("../models/company");
 const ObjectId = require("mongoose").Types.ObjectId;
+const MulterUploader = require("../../middleware/multer-engine");
+const cloudinary = require("cloudinary").v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 // get all companies
 router.get("/", async (req, res) => {
@@ -15,6 +18,7 @@ router.get("/", async (req, res) => {
         RegNumber: 1,
         Ownership: 1,
         ContactNo: 1,
+        logo: { url: 1 },
       }
     );
     // send data to front end with 200 status code
@@ -49,16 +53,54 @@ router.get("/blockedcompany", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  console.log("hitted");
-  const newCompany = new Company(req.body);
-  console.log(newCompany);
-  //   let result = newCompany.save();
-  try {
-    newCompany.save();
-    res.send(newCompany);
-  } catch {
-    console.log("error");
+router.post("/", MulterUploader.single("logo"), async (req, res) => {
+  // creating block variables
+  let cloudinaryResult;
+
+  // check whether username is available
+  const name = req.body.UserName;
+  const UserNameCheck = await Company.findOne(
+    { UserName: name },
+    { UserName: 1 }
+  );
+
+  // filter acccording to username
+  if (UserNameCheck == null) {
+    const newCompany = new Company(req.body);
+
+    // check whether email is available
+
+    const email = req.body.Email;
+    const EmailCheck = await Company.findOne({ Email: email }, { UserName: 1 });
+
+    // filter acccording to email
+    if (EmailCheck == null) {
+      try {
+        if (req.file) {
+          cloudinaryResult = await cloudinary.uploader
+            .upload(req.file.path, {
+              use_filename: true,
+              folder: "build-with/company",
+              public_id: req.file.filename,
+            })
+            .then(async (result) => {
+              newCompany.logo = result;
+            });
+        } else {
+          console.log(false);
+        }
+        newCompany.save();
+        res.send(
+          `${newCompany.Name} is registered under the name of ${newCompany.UserName}`
+        );
+      } catch {
+        console.log("error");
+      }
+    } else {
+      res.send("Email is already registered");
+    }
+  } else {
+    res.send("username is already registered");
   }
 });
 

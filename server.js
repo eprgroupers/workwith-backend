@@ -7,6 +7,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const CompanyRouter = require("./CompanyService/routes/company");
+const ReviewTextRouter = require("./CompanyService/routes/review-text");
 const WorkerRouter = require("./WorkerService/routes/worker");
 const jobRouter = require("./WorkerService/routes/job");
 
@@ -19,6 +20,7 @@ const CallCount = require("./AnalyticService/routes/callCount");
 const mongouri =
   "mongodb+srv://eprgroupers:eprgroupers@cluster0.5jlys.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 // "mongodb+srv://sample:sample@cluster0.sozug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+// "mongodb://localhost:27017/buildwith";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,6 +40,7 @@ app.get("/", (req, res) => {
 
 // Conpany Service
 app.use("/company", CompanyRouter);
+app.use("/review-t", ReviewTextRouter);
 
 // Worker Service
 app.use("/worker", WorkerRouter);

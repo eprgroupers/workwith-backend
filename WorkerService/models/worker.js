@@ -5,13 +5,13 @@ const WorkerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  // WorkArea: {
-  //   type: String,
-  // },
   UserName: {
     type: String,
     required: true,
-    unique: true,
+  },
+  UserNameCount: {
+    type: Number,
+    reqired: true,
   },
   Rating: {
     type: Number,

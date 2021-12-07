@@ -5,17 +5,22 @@ const CompanySchema = mongoose.Schema({
     type: String,
     required: [true, "Name field is required"],
   },
+  UserName: {
+    type: String,
+    required: [true, "UserName is required"],
+  },
+  Description: {
+    type: String,
+    required: [true],
+  },
   WhoWeAre: {
     type: String,
-    required: false,
   },
   Mission: {
     type: String,
-    required: true,
   },
   Vision: {
     type: String,
-    required: true,
   },
   Activate: {
     type: Boolean,
@@ -24,12 +29,8 @@ const CompanySchema = mongoose.Schema({
   },
   RegNumber: {
     type: String,
-    required: true,
   },
-  Ownership: {
-    type: String,
-    required: true,
-  },
+  Ownership: [{ type: String }],
   ContactNo: {
     type: String,
     required: true,
@@ -50,6 +51,11 @@ const CompanySchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  Rating: {
+    type: Number,
+    required: true,
+    max: [10, "Cant rate more than 5"],
+  },
   KeyFeatures: [
     {
       Feature: {
@@ -66,6 +72,11 @@ const CompanySchema = mongoose.Schema({
     type: Date,
     default: Date.now(),
     require: true,
+    immutable: true,
+  },
+  logo: {
+    type: Object,
+    default: null,
   },
 });
 
