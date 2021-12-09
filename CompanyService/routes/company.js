@@ -34,7 +34,24 @@ router.get("/:id", async (req, res) => {
   let id = req.params.id;
   try {
     // get all companies from mongodb with specific feilds
-    const company = await Company.findone({ _id: id, Activate: true });
+    const company = await Company.findOne({ _id: id, Activate: true });
+    // send data to front end with 200 status code
+    res.json(company).status(200);
+  } catch (err) {
+    // catch error
+    res.send("Error " + err);
+  }
+});
+
+// get a company with username
+router.get("/name/:username", async (req, res) => {
+  let username = req.params.username;
+  try {
+    // get all companies from mongodb with specific feilds
+    const company = await Company.findOne({
+      UserName: username,
+      Activate: true,
+    });
     // send data to front end with 200 status code
     res.json(company).status(200);
   } catch (err) {
