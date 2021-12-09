@@ -19,6 +19,7 @@ router.get("/", async (req, res) => {
     res.send("Error " + err);
   }
 });
+
 router.get("/:id", async (req, res) => {
   let id = req.params.id;
   console.log(id);
