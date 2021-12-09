@@ -18,6 +18,7 @@ router.get("/", async (req, res) => {
         RegNumber: 1,
         Ownership: 1,
         ContactNo: 1,
+        UserName: 1,
         logo: { url: 1 },
       }
     );
