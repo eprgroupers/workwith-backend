@@ -8,10 +8,10 @@ require("dotenv").config();
 
 const CompanyRouter = require("./CompanyService/routes/company");
 const ReviewTextRouter = require("./CompanyService/routes/review-text");
+const DesignRouter = require("./CompanyService/routes/design");
 const ReviewVideoRouter = require("./CompanyService/routes/review-video");
 const WorkerRouter = require("./WorkerService/routes/worker");
 const jobRouter = require("./WorkerService/routes/job");
-
 const userRoutes = require("./AuthService/routes/userRoutes");
 const resetPassword = require("./AuthService/routes/resetRoutes");
 const forgetPasswordRoutes = require("./AuthService/routes/forgetPasswordRoutes");
@@ -20,8 +20,8 @@ const PageCount = require("./AnalyticService/routes/pagecount");
 const CallCount = require("./AnalyticService/routes/callCount");
 const mongouri =
   // "mongodb+srv://eprgroupers:eprgroupers@cluster0.5jlys.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-  "mongodb+srv://sample:sample@cluster0.sozug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-// "mongodb://localhost:27017/buildwith";
+  // "mongodb+srv://sample:sample@cluster0.sozug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  "mongodb://localhost:27017/buildwith";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -43,6 +43,7 @@ app.get("/", (req, res) => {
 app.use("/company", CompanyRouter);
 app.use("/review-t", ReviewTextRouter);
 app.use("/review-v", ReviewVideoRouter);
+app.use("/design", DesignRouter);
 
 // Worker Service
 app.use("/worker", WorkerRouter);
