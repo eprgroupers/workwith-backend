@@ -13,6 +13,14 @@ const ProjectSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  imgURL: [
+    {
+      type: String,
+    },
+  ],
+  CompanyID: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Project", ProjectSchema);

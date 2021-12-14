@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const MachinerySchema = mongoose.Schema({
-  Place: {
+  Name: {
+    type: String,
+    required: true,
+  },
+  Description: {
     type: String,
     required: true,
   },
