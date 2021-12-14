@@ -9,9 +9,16 @@ const MachinerySchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  Description: {
+  Img: {
     type: String,
-    required: true,
+  },
+  Features: [
+    {
+      type: String,
+    },
+  ],
+  CompanyID: {
+    type: String,
   },
 });
 

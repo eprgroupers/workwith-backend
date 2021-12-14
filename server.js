@@ -6,12 +6,16 @@ const cors = require("cors");
 // const cookieSession = require("cookie-session");
 require("dotenv").config();
 
+// company routes require
 const CompanyRouter = require("./CompanyService/routes/company");
 const ReviewTextRouter = require("./CompanyService/routes/review-text");
 const DesignRouter = require("./CompanyService/routes/design");
 const GalleryRouter = require("./CompanyService/routes/gallery");
 const ProjectRouter = require("./CompanyService/routes/project");
 const ReviewVideoRouter = require("./CompanyService/routes/review-video");
+const MachinaryRouter = require("./CompanyService/routes/machinary");
+
+// worker routes require
 const WorkerRouter = require("./WorkerService/routes/worker");
 const jobRouter = require("./WorkerService/routes/job");
 const userRoutes = require("./AuthService/routes/userRoutes");
@@ -48,6 +52,7 @@ app.use("/review-v", ReviewVideoRouter);
 app.use("/design", DesignRouter);
 app.use("/gallery", GalleryRouter);
 app.use("/project", ProjectRouter);
+app.use("/machinary", MachinaryRouter);
 
 // Worker Service
 app.use("/worker", WorkerRouter);
