@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const DesignSchema = mongoose.Schema({
-  Place: {
+  Title: {
     type: String,
     required: true,
   },

@@ -19,6 +19,22 @@ router.get("/", async (req, res) => {
     res.send("Error " + err);
   }
 });
+
+// get random reviews
+router.get("/random", async (req, res) => {
+  try {
+    // get all companies from mongodb with specific feilds
+    const reviewText = await ReviewText.aggregate([{ $sample: { size: 5 } }]);
+    // send data to front end with 200 status code
+    // res.json(reviewText).status(200);
+    res.json(reviewText);
+  } catch (err) {
+    // catch error
+    res.send("Error " + err);
+  }
+});
+
+// get review by id
 router.get("/:id", async (req, res) => {
   let id = req.params.id;
   console.log(id);
@@ -41,6 +57,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// create new id
 router.post("/", async (req, res) => {
   const newReview = new ReviewText(req.body);
   let companyId = req.body.CompanyID;

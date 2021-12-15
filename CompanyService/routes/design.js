@@ -22,7 +22,6 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   let id = req.params.id;
-  console.log(id);
   let Serchcompany = await Company.findOne({ _id: id });
 
   if (Serchcompany != null) {
@@ -47,7 +46,6 @@ router.post("/", async (req, res) => {
   let companyId = req.body.CompanyID;
 
   let Serchcompany = await Company.findOne({ _id: companyId });
-  console.log(Serchcompany);
   if (Serchcompany != null) {
     try {
       newDesign.save();

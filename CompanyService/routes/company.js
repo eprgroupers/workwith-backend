@@ -124,7 +124,6 @@ router.post("/", MulterUploader.single("logo"), async (req, res) => {
 
 router.patch("/blockcompany", async (req, res) => {
   id = req.body.id;
-  console.log();
   if (ObjectId.isValid(id)) {
     let sample = await Company.findById({ _id: id });
     if (sample === null) {
