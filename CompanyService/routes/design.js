@@ -48,8 +48,7 @@ router.post("/", async (req, res) => {
   let Serchcompany = await Company.findOne({ _id: companyId });
   if (Serchcompany != null) {
     try {
-      newDesign.save();
-      res.send(`${newDesign.Place}'s design is added`);
+      newDesign.save().then(res.send(`${newDesign.Place}'s design is added`));
     } catch {
       res.send("some error occured");
     }
