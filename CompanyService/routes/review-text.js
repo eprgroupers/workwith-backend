@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 router.get("/random", async (req, res) => {
   try {
     // get all companies from mongodb with specific feilds
-    const reviewText = await ReviewText.aggregate([{ $sample: { size: 5 } }]);
+    const reviewText = await ReviewText.aggregate([{ $sample: { size: 7 } }]);
     // send data to front end with 200 status code
     // res.json(reviewText).status(200);
     res.json(reviewText);
