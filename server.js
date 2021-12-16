@@ -25,8 +25,8 @@ const checkIdentity = require("./AuthService/routes/checkIdentity");
 const PageCount = require("./AnalyticService/routes/pagecount");
 const CallCount = require("./AnalyticService/routes/callCount");
 const mongouri =
-  // "mongodb+srv://eprgroupers:eprgroupers@cluster0.5jlys.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-  "mongodb+srv://sample:sample@cluster0.sozug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  "mongodb+srv://eprgroupers:eprgroupers@cluster0.5jlys.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+// "mongodb+srv://sample:sample@cluster0.sozug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 // "mongodb://localhost:27017/buildwith";
 
 app.use(express.json());

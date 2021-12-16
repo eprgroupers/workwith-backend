@@ -30,6 +30,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+// getRandomCompanies
+router.get("/random", async (req, res) => {
+  try {
+    // get all companies from mongodb with specific feilds
+
+    const company = await Company.aggregate([
+      { $project: { Name: 1, logo: { url: 1 } } },
+      { $sample: { size: 7 } },
+    ]);
+    // send data to front end with 200 status code
+    res.json(company).status(200);
+  } catch (err) {
+    // catch error
+    res.send("Error " + err);
+  }
+});
+
 // get a company with id
 router.get("/:id", async (req, res) => {
   let id = req.params.id;
@@ -98,7 +115,7 @@ router.post("/", MulterUploader.single("logo"), async (req, res) => {
           cloudinaryResult = await cloudinary.uploader
             .upload(req.file.path, {
               use_filename: true,
-              folder: "build-with/company",
+              folder: "build-with/company-logo",
               public_id: req.file.filename,
             })
             .then(async (result) => {
