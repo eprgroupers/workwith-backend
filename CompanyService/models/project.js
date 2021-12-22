@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { array } = require("../../middleware/multer-engine");
 
 const ProjectSchema = mongoose.Schema({
   Title: {
@@ -13,14 +14,20 @@ const ProjectSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  imgURL: [
-    {
-      type: String,
+  image:[{
+    imgURL:{
+      type:String,
     },
-  ],
+    cloudinaryDetails:{
+      type:Object
+    }
+  }],
+ 
   CompanyID: {
     type: String,
   },
+  
+  
 });
 
 module.exports = mongoose.model("Project", ProjectSchema);

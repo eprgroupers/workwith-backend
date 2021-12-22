@@ -41,14 +41,30 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const newDesign = new Design(req.body);
+
+//create new design
+router.post("/", MulterUploader.single("design-img"), async (req, res) => {
+  const newDesign = new Design(req.body);//create object newDesign and asign req.body details
   let companyId = req.body.CompanyID;
 
-  let Serchcompany = await Company.findOne({ _id: companyId });
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
+  //checking company is registed
   if (Serchcompany != null) {
     try {
-      newDesign.save().then(res.send(`${newDesign.Place}'s design is added`));
+      //check image file value
+      if (req.file !== undefined) {
+        //upload cloudinary
+        let imgInfo = cloudinary.uploader
+          .upload(req.file.path, {
+            use_filename: true,
+            folder: "build-with/design/image",
+            public_id: req.file.filename,
+          })
+        newDesign.cloudinaryDetails = await imgInfo;//add cloudinary details newDesign object
+        let url = (await imgInfo).url;//image url
+        newDesign.Image = url;
+      }
+      newDesign.save().then(res.send(`${newDesign.Place}'s design is added`));//save database
     } catch {
       res.send("some error occured");
     }

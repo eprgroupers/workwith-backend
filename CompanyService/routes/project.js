@@ -5,6 +5,7 @@ const Company = require("../models/company");
 const ObjectId = require("mongoose").Types.ObjectId;
 const MulterUploader = require("../../middleware/multer-engine");
 const cloudinary = require("cloudinary").v2;
+const { array } = require("../../middleware/multer-engine");
 cloudinary.config(process.env.CLOUDINARY_URL);
 
 // get all companies
@@ -42,19 +43,47 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const newProject = new Project(req.body);
+//create new project
+router.post("/", MulterUploader.array('project-img', 12), async (req, res, next) => {
+  const newProject = new Project(req.body);//create object newProject and asign req.body details
   let companyId = req.body.CompanyID;
-
-  let Serchcompany = await Company.findOne({ _id: companyId });
+    var imageDetails = [];
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
   console.log(Serchcompany);
+
+  //checking company is registed
   if (Serchcompany != null) {
     try {
-      newProject.save();
-      res.send(`${newProject.Title} Project is added`);
+      var arrayLenght = req.files.length;//get number of files there
+      //check image file value
+      if (req.files !== undefined) {
+        //check files length morethan 3?
+        if (arrayLenght > 3) {
+          console.log(arrayLenght);
+          //loop files/images
+          for (var i = 0; i < req.files.length; i++) {
+            var locaFilePath = req.files[i].path;//get file localpath
+            var result = await cloudinary.uploader.upload(locaFilePath);//upload cloudinary
+            
+            let imgObj  = new Object;
+            imgObj.imgURL = result.url;
+            imgObj.cloudinaryDetails=result;
+
+            imageDetails[i] = imgObj;
+           
+          }
+          console.log(imageDetails);
+          newProject.image = imageDetails;
+          newProject.save();//save database
+          res.send(`${newProject.Title} Project is added`);
+        } else {
+          res.send("please add morethan 3 images");
+        }
+      }
     } catch {
       res.send("some error occured");
     }
+
   } else {
     res.send("No company registered in the name");
   }

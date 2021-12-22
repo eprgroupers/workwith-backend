@@ -20,6 +20,7 @@ const DesignSchema = mongoose.Schema({
     type: String,
     required: [true, "CompanyID is required"],
   },
+  cloudinaryDetails: { type: Object },
 });
 
 module.exports = mongoose.model("Design", DesignSchema);

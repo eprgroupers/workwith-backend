@@ -21,6 +21,11 @@ const ReviewVideoSchema = mongoose.Schema({
     type: String,
     required: [true, "CompanyID is required"],
   },
+  cloudinaryDetails: { type: Object },
+  ProfilePicture:{
+    type: String,
+    default: null,
+  }
 });
 
 module.exports = mongoose.model("ReviewVideo", ReviewVideoSchema);
