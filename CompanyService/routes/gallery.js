@@ -42,16 +42,39 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const newGalleryImg = new Gallery(req.body);
+
+//create new gallery image
+router.post("/", MulterUploader.single("ImgURL"), async (req, res) => {
+  const newGalleryImg = new Gallery(req.body);//create object newGalleryImg and asign req.body details
   let companyId = req.body.CompanyID;
 
-  let Serchcompany = await Company.findOne({ _id: companyId });
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
   console.log(Serchcompany);
+
+  //checking company is registed
   if (Serchcompany != null) {
     try {
-      newGalleryImg.save();
-      res.send(`Your image is added`);
+      //check image file value
+      if (req.file !== undefined) {
+        //upload cloudinary
+        let imgInfo = cloudinary.uploader
+          .upload(req.file.path, {
+            use_filename: true,
+            folder: "build-with/gallery/image",
+            public_id: req.file.filename,
+          })
+        newGalleryImg.cloudinaryDetails = await imgInfo;//add cloudinary details newGalleryImg object
+        let url = (await imgInfo).url;
+        newGalleryImg.ImgURL = url;
+        console.log(imgInfo);
+
+        newGalleryImg.save()//save database
+          .then(res.send(`Your image is added`));
+
+      } else {
+        res.send("image required");
+      }
+
     } catch {
       res.send("some error occured");
     }

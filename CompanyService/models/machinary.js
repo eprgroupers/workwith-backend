@@ -20,6 +20,7 @@ const MachinerySchema = mongoose.Schema({
   CompanyID: {
     type: String,
   },
+  cloudinaryDetails: { type: Object },
 });
 
 module.exports = mongoose.model("Machinery", MachinerySchema);

@@ -42,15 +42,34 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const newMachine = new Machinary(req.body);
+
+//create new machine
+router.post("/", MulterUploader.single("machinary-img"), async (req, res) => {
+  const newMachine = new Machinary(req.body);//create object newMachine and asign req.body details
   let companyId = req.body.CompanyID;
 
-  let Serchcompany = await Company.findOne({ _id: companyId });
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
   console.log(Serchcompany);
+
+  //checking company is registed
   if (Serchcompany != null) {
     try {
-      newMachine.save();
+      //check image file value
+      if (req.file !== undefined) {
+        //upload cloudinary
+        let imgInfo = cloudinary.uploader
+          .upload(req.file.path, {
+            use_filename: true,
+            folder: "build-with/machinary/image",
+            public_id: req.file.filename,
+          })
+        newMachine.cloudinaryDetails = await imgInfo;//add cloudinary details newMachine object
+        let url = (await imgInfo).url;
+        newMachine.Img = url;
+
+
+      }
+      newMachine.save();//save database
       res.send(`${newMachine.Name}  is added`);
     } catch {
       res.send("some error occured");

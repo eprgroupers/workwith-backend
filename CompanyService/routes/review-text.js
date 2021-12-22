@@ -57,16 +57,33 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// create new id
-router.post("/", async (req, res) => {
-  const newReview = new ReviewText(req.body);
+
+router.post("/", MulterUploader.single("profile"), async (req, res) => {
+  const newReview = new ReviewText(req.body);//create object newReview and asign req.body details
   let companyId = req.body.CompanyID;
 
-  let Serchcompany = await Company.findOne({ _id: companyId });
+
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
   console.log(Serchcompany);
+  //checking company is registed
   if (Serchcompany != null) {
     try {
-      newReview.save();
+      //check image file value
+      if (req.file !== undefined) {
+        //upload cloudinary
+        let imgInfo = cloudinary.uploader
+          .upload(req.file.path, {
+            use_filename: true,
+            folder: "build-with/review-text/profile",
+            public_id: req.file.filename,
+          })
+        newReview.cloudinaryDetails = await imgInfo;//add cloudinary details newReview object
+        let url = (await imgInfo).url;
+        newReview.ProfilePicture = url;
+
+
+      }
+      newReview.save();//save datebase
       res.send(`${newReview.Name}'s review is added`);
     } catch {
       res.send("some error occured");
@@ -75,5 +92,6 @@ router.post("/", async (req, res) => {
     res.send("No comapny registered in the name");
   }
 });
+
 
 module.exports = router;
