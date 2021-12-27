@@ -71,7 +71,7 @@ router.post("/", MulterUploader.single("profile"), async (req, res) => {
       //check image file value
       if (req.file !== undefined) {
         //upload cloudinary
-        let imgInfo = cloudinary.uploader
+        let imgInfo =cloudinary.uploader
           .upload(req.file.path, {
             use_filename: true,
             folder: "build-with/review-text/profile",
@@ -93,5 +93,47 @@ router.post("/", MulterUploader.single("profile"), async (req, res) => {
   }
 });
 
+router.patch("/edit/:id", MulterUploader.single("profile"), async (req, res) => {
+  let newReview = new ReviewText(req.body);//create object newReview and asign req.body details
+  newReview._id = req.params.id;
+  let companyId = req.body.CompanyID;
+  let reviewText = await ReviewText.findById(req.params.id);
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
+  var cloudinaryDetails = reviewText.cloudinaryDetails;
+  //console.log(Serchcompany);
+  //checking company is registed
+  if (Serchcompany != null) {
+    try {
+      //check image file value
+      if (req.file !== undefined) {
+        if(cloudinaryDetails !==undefined){
+          await cloudinary.uploader.destroy(reviewText.cloudinaryDetails.public_id);
+        }
+        //upload cloudinary
+        //await cloudinary.uploader.destroy(reviewText.cloudinaryDetails.public_id);
+        let imgInfo = cloudinary.uploader
+          .upload(req.file.path, {
+            use_filename: true,
+            folder: "build-with/review-text/profile",
+            public_id: req.file.filename,
+          })
+        newReview.cloudinaryDetails = await imgInfo;//add cloudinary details newReview object
+        let url = (await imgInfo).url;
+        newReview.ProfilePicture = url;
 
+
+      }
+      console.log(newReview);
+      
+       await ReviewText.findByIdAndUpdate(req.params.id, newReview, { new: true })
+        res.json("updated....."); 
+      // newReview.save();//save datebase
+      // res.send(`${newReview.Name}'s review is added`);
+    } catch(err) {
+      res.send(err);
+    }
+  } else {
+    res.send("No comapny registered in the name");
+  }
+});
 module.exports = router;
