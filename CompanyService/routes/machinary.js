@@ -79,4 +79,47 @@ router.post("/", MulterUploader.single("machinary-img"), async (req, res) => {
   }
 });
 
+
+router.patch("/edit/:id", MulterUploader.single("machinary-img"), async (req, res) => {
+  const newMachine = new Machinary(req.body);//create object newMachine and asign req.body details
+  newMachine._id = req.params.id;
+  let companyId = req.body.CompanyID;
+  let machinary = await Machinary.findById(req.params.id);
+  console.log(machinary);
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
+  //console.log(Serchcompany);
+  var cloudinaryDetails =machinary["cloudinaryDetails" ] ==undefined;
+  console.log(cloudinaryDetails);
+  //checking company is registed
+  if (Serchcompany != null) {
+    try {
+      //check image file value
+      if (req.file !== undefined) {
+
+        if(cloudinaryDetails !==true){
+          await cloudinary.uploader.destroy(machinary.cloudinaryDetails.public_id);
+        }
+        //upload cloudinary
+        let imgInfo = cloudinary.uploader
+          .upload(req.file.path, {
+            use_filename: true,
+            folder: "build-with/machinary/image",
+            public_id: req.file.filename,
+          })
+        newMachine.cloudinaryDetails = await imgInfo;//add cloudinary details newMachine object
+        let url = (await imgInfo).url;
+        newMachine.Img = url;
+
+
+      }
+      await Machinary.findByIdAndUpdate(req.params.id, newMachine, { new: true })
+      res.json("updated....."); 
+    } catch(err) {
+      res.send(err);
+    }
+  } else {
+    res.send("No company registered in the name");
+  }
+});
+
 module.exports = router;
