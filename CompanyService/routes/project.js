@@ -89,4 +89,49 @@ router.post("/", MulterUploader.array('project-img', 12), async (req, res, next)
   }
 });
 
+
+//create new project
+router.patch("/project/:id", MulterUploader.array('project-img', 12), async (req, res, next) => {
+  const newProject = new Project(req.body);//create object newProject and asign req.body details
+  let companyId = req.body.CompanyID;
+  let image = await Project.findOne({_id:req.params.id});
+    var imageDetails = [];
+  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
+  console.log(Serchcompany);
+
+  //checking company is registed
+  if (Serchcompany != null) {
+    try {
+      var arrayLenght = req.files.length;//get number of files there
+      //check image file value
+      if (req.files !== undefined) {
+        //check files length morethan 3?
+          console.log(arrayLenght);
+          //loop files/images
+          for (var i = 0; i < req.files.length; i++) {
+            var locaFilePath = req.files[i].path;//get file localpath
+            var result = await cloudinary.uploader.upload(locaFilePath);//upload cloudinary
+            
+            let imgObj  = new Object;
+            imgObj.imgURL = result.url;
+            imgObj.cloudinaryDetails=result;
+
+            imageDetails[i] = imgObj;
+           
+          }
+          var newImages = (image.image).concat(imageDetails)
+          console.log(imageDetails);
+          newProject.image = newImages;
+          newProject._id = req.params.id;
+          await Project.findByIdAndUpdate(req.params.id, newProject, { new: true })
+          res.json("updated....."); 
+      }
+    } catch {
+      res.send("some error occured");
+    }
+
+  } else {
+    res.send("No company registered in the name");
+  }
+});
 module.exports = router;
