@@ -48,9 +48,9 @@ router.post("/", MulterUploader.single("design-img"), async (req, res) => {
   let companyId = req.body.CompanyID;
   //let img = req.body.design-img;
   //console.log(img);
-  let Serchcompany = await Company.findOne({ _id: companyId });//find company details
+  let Searchcompany = await Company.findOne({ _id: companyId });//find company details
   //checking company is registed
-  if (Serchcompany != null) {
+  if (Searchcompany != null) {
     try {
       //check image file value
       if (req.file !== undefined) {
@@ -64,6 +64,8 @@ router.post("/", MulterUploader.single("design-img"), async (req, res) => {
         newDesign.cloudinaryDetails = await imgInfo;//add cloudinary details newDesign object
         let url = (await imgInfo).url;//image url
         newDesign.Image = url;
+      }else{
+        res.send("Please add an Image");
       }
       newDesign.save().then(res.send(`${newDesign.Title}'s design is added`));//save database
     } catch {
@@ -105,6 +107,8 @@ router.patch("/edit-design/:id", MulterUploader.single("design-img"), async (req
         newDesign.cloudinaryDetails = await imgInfo;//add cloudinary details newDesign object
         let url = (await imgInfo).url;//image url
         newDesign.Image = url;
+      }else{
+        res.send("Please add an Image");
       }
          await Design.findByIdAndUpdate(req.params.id, newDesign, { new: true })
          res.json(newDesign); 

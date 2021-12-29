@@ -135,7 +135,7 @@ router.post("/", MulterUploader.single("logo"), async (req, res) => {
       res.send("Email is already registered");
     }
   } else {
-    res.send("username is already registered");
+    res.status(409).send("username is already registered");
   }
 });
 
@@ -188,5 +188,72 @@ router.patch("/unblockcompany", async (req, res) => {
     res.status(404).send("No company available");
   }
 });
+
+router.patch("/edit/:id", MulterUploader.single("logo"), async (req, res) => {
+  // creating block variables
+  let cloudinaryResult;
+
+  // check whether username is available
+  const name = req.body.UserName;
+  const company =await Company.findOne({_id:req.params.id});
+  let existUserName = company.UserName;
+  console.log(existUserName);
+ 
+  // filter acccording to username
+  if (existUserName == name) {
+    const newCompany = new Company(req.body);
+    newCompany.UserName = existUserName;
+    newCompany._id = req.params.id;
+
+  
+      try {
+        if (req.file  != undefined) {
+          cloudinaryResult = await cloudinary.uploader
+            .upload(req.file.path, {
+              use_filename: true,
+              folder: "build-with/company-logo",
+              public_id: req.file.filename,
+            })
+            .then(async (result) => {
+              newCompany.logo = result;
+            });
+        } else {
+          console.log(false);
+        }
+        await Company.findByIdAndUpdate(req.params.id, newCompany, { new: true })
+        res.json("updated....."); 
+      } catch {
+        console.log("error");
+      }
+    
+  } else {
+    res.status(409).send("you don't change your username on this action...");
+  }
+});
+
+router.patch('/username/:id',async(req,res)=>{
+  const company =await Company.findOne({_id:req.params.id});
+  try{
+      let name = req.body.UserName;
+      const UserNameCheck = await Company.findOne(
+        { UserName: name },
+        { UserName: 1 }
+      );
+
+      if (UserNameCheck == null) {
+        const newCompany = new Company(req.body);
+          newCompany._id = req.params.id;
+          newCompany.UserName = name;
+
+        await Company.findByIdAndUpdate(req.params.id, newCompany, { new: true })
+          res.json("updated....."); 
+      }else{
+        res.send("UserName Already Exist...")
+      }
+}catch(err){
+    res.send(err);
+}
+});
+
 
 module.exports = router;
