@@ -6,6 +6,7 @@ const Job = require("../models/job");
 const ObjectId = require("mongoose").Types.ObjectId;
 const cloudinary = require("cloudinary").v2;
 
+
 cloudinary.config(process.env.CLOUDINARY_URL);
 
 //route to review
@@ -210,15 +211,16 @@ router.get("/blockedworker", async (req, res) => {
 // Add a worker
 router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
   let newWorker = new Worker(req.body);
-  // check whether this username available
 
-  let userNameCheck = await Worker.find({ UserName: req.body.UserName });
-  newWorker.UserNameCount = userNameCheck.length + 1;
-
-  // check whether img is available to upload
+let userNameCheck = await Worker.findOne({UserName:req.body.UserName})
+   .sort({UserNameCount:-1})
+   .limit(1)
 
   //check NIC Available
-
+  if(userNameCheck != null){
+let uc =await userNameCheck.UserNameCount +1;
+ newWorker.UserNameCount =uc;
+  }
   let checkNIC = await Worker.findOne({ NICNo: req.body.NICNo });
   if (checkNIC !== null) {
     //if Nic already registered
@@ -235,6 +237,7 @@ router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
           newWorker.cloudinaryDetails = result;
           newWorker.ProfileImg = result.url;
           try {
+           
             newWorker.save((err, res) => {
               res.Job.map((job) => {
                 console.log(job);
@@ -257,6 +260,7 @@ router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
         });
     } else {
       try {
+      
         newWorker.save((err, response) => {
           if (err) {
             res.send(err);
@@ -282,6 +286,7 @@ router.post("/", MulterUploader.single("worker-img"), async (req, res) => {
     }
   }
 });
+
 
 router.patch("/blockworker", async (req, res) => {
   id = req.body.id;
@@ -309,7 +314,6 @@ router.patch("/blockworker", async (req, res) => {
 });
 
 router.patch("/unblockworker", async (req, res) => {
-  //   console.log(req.body.id);
   id = req.body.id;
 
   if (ObjectId.isValid(id)) {
@@ -350,7 +354,96 @@ router.get("/by-username/:name", async (req, res) => {
     }
   );
 
-  // console.log(doc.Name);
+  
 });
 
+
+//update worker 
+router.patch("/edit/:id", MulterUploader.single("worker-img"), async (req, res) => {
+  let existWorker =await Worker.findOne({_id:req.params.id});
+  let name =  existWorker.UserName;
+  let newWorker = new Worker(req.body);
+  console.log(newWorker);
+ 
+  
+let userNameCheck = await Worker.findOne({UserName:req.body.UserName})
+.sort({UserNameCount:-1})
+.limit(1)
+
+  if(name != req.body.UserName){
+    if(userNameCheck.length != 0){
+      let uc =await userNameCheck.UserNameCount +1;
+      newWorker.UserNameCount =uc;
+       }
+}else{
+  newWorker.UserNameCount = existWorker.UserNameCount;
+}
+  // check whether img is available to upload
+
+  //check NIC Available
+
+  let checkNIC = await Worker.findOne({ NICNo: req.body.NICNo });
+  let check = await Worker.findOne({ _id: req.params.id });
+  //let existNic = await;
+  //console.log(existNic);
+  if (checkNIC == null ||  check.NICNo === req.body.NICNo) {
+    newWorker._id = req.params.id;
+   // newWorker.NICNo = req.body.NICNo;
+    //newWorker.NICNo = existNic;
+    if (req.file !== undefined) {
+      cloudinary.uploader
+        .upload(req.file.path, {
+          use_filename: true,
+          folder: "work-with",
+          public_id: req.file.filename,
+        })
+        .then(async (result) => {
+          newWorker.cloudinaryDetails = result;
+          newWorker.ProfileImg = result.url;
+         
+          try {
+            
+            await Worker.findByIdAndUpdate(req.params.id, newWorker, { new: true });
+             res.json("updated....."); 
+            // newWorker.save();
+            let editJob = await Job.findOne({ Job: req.body.Job });
+            if (editJob === null) {
+              res.status(404).send("No Job records found");
+            } else {
+              editJob.count = editJob.count + 1;
+              editJob.save();
+              res.json(newWorker.Name);
+            }
+            // res.json(newWorker);
+          } catch (err) {
+            // console.log("error");
+            console.log(err);
+          }
+        });
+    } else {
+        await Worker.findByIdAndUpdate(req.params.id, newWorker, { new: true });
+        res.json("updated....."); 
+              let job = newWorker.Job;
+              let editJob = await Job.findOne({ Job: job });
+              if (editJob === null) {
+                res.status(404).send("No job records found");
+              } else {
+                editJob.count = editJob.count + 1;
+                editJob.save();
+              }
+
+        // res.json(newWorker);
+      
+    }
+   
+  } else {
+    //if Nic already registered
+    res.send("NIC already registered");
+  }
+});
+
+
 module.exports = router;
+
+
+

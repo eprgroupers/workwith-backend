@@ -12,6 +12,7 @@ const WorkerSchema = mongoose.Schema({
   UserNameCount: {
     type: Number,
     reqired: true,
+    default:1,
   },
   Rating: {
     type: Number,

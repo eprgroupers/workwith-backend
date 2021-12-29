@@ -71,8 +71,8 @@ router.post("/", MulterUploader.single("ImgURL"), async (req, res) => {
         newGalleryImg.save()//save database
           .then(res.send(`Your image is added`));
 
-      } else {
-        res.send("image required");
+      }else{
+        res.send("Please add an Image");
       }
 
     } catch {
@@ -112,8 +112,8 @@ router.patch("/edit/:id", MulterUploader.single("ImgURL"), async (req, res) => {
         await Gallery.findByIdAndUpdate(req.params.id, newGalleryImg, { new: true })
         res.json("updated....."); 
 
-      } else {
-        res.send("image required");
+      } else{
+        res.send("Please add an Image");
       }
 
     } catch {

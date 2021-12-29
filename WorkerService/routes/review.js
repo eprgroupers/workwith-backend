@@ -72,4 +72,28 @@ router.patch("/blockjob", async (req, res) => {
     res.status(404).send("No job available");
   }
 });
+
+router.patch("/edit/:id", async (req, res) => {
+  //let workerid = req.body.workerID;
+  let workeridCheck = await Worker.findOne({_id:req.body.workerID});
+  console.log(workeridCheck);
+  try {
+    let newReview = new Review(req.body);
+    
+  
+    //console.log(workerid);
+    newReview._id = req.params.id;
+    console.log(newReview);
+    
+    
+    if(workeridCheck != null){
+    await Review.findByIdAndUpdate(req.params.id, newReview, { new: true })
+    res.json(newReview); 
+    }else{
+      res.send("No worker in this ID")
+    }
+  } catch (err) {
+    throw err;
+  }
+});
 module.exports = router;
